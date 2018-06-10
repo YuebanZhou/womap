@@ -1,0 +1,212 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body.gray-bg {
+  /* height: 100%; */
+  background-color: #091c3d;
+  overflow: hidden;
+   
+}
+#bg {
+  width: 100%;
+  height: 100%;
+  /* background-color: red; */
+  background-image: url('../img/bg4.jpg');
+  background-repeat: no-repeat;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  
+}
+.ibox {
+  z-index: 10;
+  margin-bottom: 0;
+  width: 18%;
+  min-width: 205px;
+  /* min-height: 270px; */
+  /* height: auto; */
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+}
+
+.ibox1 {
+  position: absolute;
+  top: 40px;
+  right: 1%;
+}
+
+.ibox1 .ibox-content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ibox1 td {
+  font-size: 12px;
+  height: 20px;
+  line-height: 20px;
+}
+
+.ibox1 tr:first-child {
+  border: none;
+}
+
+.ibox2 {
+  position: absolute;
+  top: 40px;
+  right: 20%;
+}
+
+.ibox2 .ibox-content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ibox2 td {
+  font-size: 12px;
+  height: 20px;
+  line-height: 20px;
+}
+
+.ibox2 tr:first-child {
+  border: none;
+}
+
+.ibox3 {
+  position: absolute;
+  top: 345px;
+  right: 1%;
+  height: 240px;
+  width: 37%;
+}
+
+.ibox3 .ibox-content {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 200px;
+}
+.ibox3 .ibox-content #echarts-line-chart {
+  height: 200px;
+}
+
+input.btn-click1 {
+  position: absolute;
+  top: 0;
+  right: 15px;
+  color: #fff;
+  z-index: 12;
+  background: rgba(20, 17, 133, 0.87);
+}
+
+.ibox-title,
+.ibox-content {
+  border-color: #03395d;
+}
+
+.table {
+  text-align: center;
+}
+
+.ibox-content table.table tr,
+td {
+  border-color: #1f516f !important;
+}
+
+.consul {
+  cursor: pointer;
+}
+
+.ibox-content table tr:hover {
+  background-color: #091c3d;
+}
+
+.modal-content {
+  background-color: #091c3d;
+  color: #fff;
+}
+
+.modal-content .close {
+  color: #fff
+}
+
+.coor {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background-color: #fff;
+  bottom: 0;
+  right: 0;
+}
+
+.return {
+  position: absolute;
+  top: 0;
+  right: 230px;
+  background-color: rgba(20, 17, 133, 0.87);
+  color: #fff;
+}
+
+.return:focus {
+  color: #fff;
+}
+
+.return:hover {
+  color: #fff;
+}
+
+.ibox-table {
+  overflow: auto;
+  max-height: 100%;
+}
+
+.ibox-content div {
+  max-height: 100%;
+}
+
+.btn-click1:hover {
+  color: #fff;
+}
+
+.btn-click1:focus {
+  color: #fff;
+}
+
+#restart {
+  position: absolute;
+  bottom: 230px;
+  right: 65px;
+  color: #fff;
+  z-index: 12;
+  background: rgba(20, 17, 133, 0.87);
+}
+
+#movechart {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  /* background-color: #091c3d */
+}
+
+#main-two {
+  position: absolute;
+  top: 50px;
+  left: 5px;
+}
+#message {
+  width: 100%;
+  height: 200px;
+  background-color: rgba(0, 0, 0, .5);
+  position: absolute;
+  bottom: 17px;
+  left: 10px;
+  padding: 10px;
+}
+#message h4 {
+  color: #fff;
+}
