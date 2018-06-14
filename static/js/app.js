@@ -155,7 +155,7 @@ var option = {
   title: {
     text: '短信活动信息发送数量分布图',
     subtext: '短信活动信息发送数量分布图',
-    link: 'http://www.baidu.com',
+    // link: 'http://www.baidu.com',
     left: 10,
     textStyle: {
       color: '#fff',

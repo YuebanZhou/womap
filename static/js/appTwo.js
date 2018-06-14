@@ -2,7 +2,7 @@ var mainChart = echarts.init(document.getElementById('main-two'));
 //判定定时器是否启动的flag
 var flag = false;
 //判定定时器是否存在
-var exit=false;
+var exit = false;
 //窗口宽度发生改变宽度适配
 $(window).resize(function () {
   // chartsize()
@@ -161,8 +161,8 @@ mainoption = {
       }
     }
   }],
-  grid:{
-    width:'auto'
+  grid: {
+    width: 'auto'
   }
 };
 mainChart.setOption(mainoption);
@@ -173,6 +173,7 @@ $(".consul").click(function () {
   $("#movechart").show();
   //折线图适配屏幕
   // chartsize();
+  getMessage()
   //手动将标识变成true，这样下面的定时器就可以运行
   flag = true;
   settimer();
@@ -200,10 +201,10 @@ $(".return").click(function () {
 
   });
   //清理定时器
-  if(exit){
+  if (exit) {
     econsole()
   }
-  exit=false;
+  exit = false;
 })
 //重启定时器按钮
 $("#restart").click(function () {
@@ -252,7 +253,7 @@ function settimer() {
   };
   //调用定时器结束之后，手动将flag恢复原值
   flag = false;
-  exit=true;
+  exit = true;
 }
 //清理定时器
 function econsole() {
@@ -261,6 +262,20 @@ function econsole() {
   //清理完定时器之后，手动将flag变成true，这样定时器就可以再次运行
   flag = true;
 }
-window.onload = function () {
+function getMessage() {
+  $.ajax({
+    type: 'post',
+    async: false,
+    url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
+    data: {
+      send: '201806140934'
+    },
+    success: function (result) {
+      console.log(result);
+    },
+    error: function () {
+      console.log("请求失败")
+    }
+  });
 
 }
