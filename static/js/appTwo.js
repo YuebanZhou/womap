@@ -173,7 +173,7 @@ $(".consul").click(function () {
   $("#movechart").show();
   //折线图适配屏幕
   // chartsize();
-  getMessage()
+  // getMessage()
   //手动将标识变成true，这样下面的定时器就可以运行
   flag = true;
   settimer();
@@ -262,20 +262,50 @@ function econsole() {
   //清理完定时器之后，手动将flag变成true，这样定时器就可以再次运行
   flag = true;
 }
-function getMessage() {
-  $.ajax({
-    type: 'post',
-    async: false,
-    url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
-    data: {
-      send: '201806140934'
-    },
-    success: function (result) {
-      console.log(result);
-    },
-    error: function () {
-      console.log("请求失败")
-    }
-  });
 
+function dataTime() {
+  var d = new Date();
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1;
+  var dt = d.getDate();
+  var hour = d.getHours();
+  var minute = d.getMinutes();
+  if (month < 10) {
+    month = "0" + month;
+  }
+  if (dt < 10) {
+    dt = "0" + dt;
+  }
+  if (hour < 10) {
+    hour = "0" + hour;
+  }
+  if (minute < 10) {
+    minute = "0" + minute
+  }
+  var today = year + month + dt + hour + minute;
+  queryDate = today;
+  console.log(queryDate);
+
+  return queryDate;
 }
+dataTime();
+
+
+/*
+$.ajax({
+  type: 'post',
+  async: false,
+  url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
+  data: {
+    // send: '201806140935'
+    send: queryDate
+  },
+  success: function (result) {
+    console.log(result);
+    var sendnum = result.code
+    console.log(sendnum);
+  },
+  error: function () {
+    console.log("请求失败")
+  }
+});*/

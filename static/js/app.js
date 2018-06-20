@@ -81,9 +81,11 @@ chart.on('click', function (params) {
           value: data.features[i].properties.cp,
         })
       }
+      // 经度纬度发送量的数组
       var prow = [];
       for (var i = 0; i < allData.length; i++) {
         var value = [];
+        // 后台数据的省份名称匹配上name属性
         if (allData[i].hallProv == params.name) {
           var v1 = parseFloat(allData[i].hallLng)
           var v2 = parseFloat(allData[i].hallLat)
@@ -247,87 +249,87 @@ function renderMap(map, data, cityData) {
       }
   };*/
   //渲染坐标动点
-  //渲染热点
+
   option.series = [{
-      name: map,
-      type: 'effectScatter',
-      map: 'china',
-      coordinateSystem: 'geo',
-      data: data,
-      roam: false,
-      left: 10,
-      top: 'center',
-      height: '80%',
-      selectedMode: 'single',
-      symbolSize: 6,
-      showEffectOn: 'render',
-      rippleEffect: {
-        brushType: 'stroke'
-      },
-      hoverAnimation: true,
-      nameMap: {
-        'china': '中国'
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: function (params) {
-          if (typeof (params.value)[2] == "undefined") {
-            return params.name + ' : ' + params.value;
-          } else {
-            return params.name + ' : ' + params[2].value;
-          }
-        }
-      },
-      label: {
-        normal: {
-          show: true,
-          formatter: '{b}',
-          position: 'right',
-          textStyle: {
-            color: "#ffeaea",
-            fontSize: 12
-          }
-        },
-        emphasis: {
-          show: true,
-          textStyle: {
-            color: "#51a1a1",
-            //renderMap2中的颜色不一样
-            // color: "#7fffff",
-            fontSize: 12
-          }
-        }
-      },
-      itemStyle: {
-        normal: {
-          color: '#F4E925',
-          shadowBlur: 8,
-          shadowColor: '#05C3F9'
-        }
-      },
-      zlevel: 1
+    name: map,
+    type: 'effectScatter',
+    map: 'china',
+    coordinateSystem: 'geo',
+    data: data,
+    roam: false,
+    left: 10,
+    top: 'center',
+    height: '80%',
+    selectedMode: 'single',
+    symbolSize: 6,
+    showEffectOn: 'render',
+    rippleEffect: {
+      brushType: 'stroke'
     },
-    {
-      name: '短信发送量',
-      type: 'scatter',
-      coordinateSystem: 'geo',
-      data: cityData,
-      symbolSize: ssize,
-      label: {
-        normal: {
-          show: false
-        },
-        emphasis: {
-          show: false
-        }
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: '#fff',
-          borderWidth: 1
+    hoverAnimation: true,
+    nameMap: {
+      'china': '中国'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) {
+        if (typeof (params.value)[2] == "undefined") {
+          return params.name + ' : ' + params.value;
+        } else {
+          return params.name + ' : ' + params[2].value;
         }
       }
+    },
+    label: {
+      normal: {
+        show: true,
+        formatter: '{b}',
+        position: 'right',
+        textStyle: {
+          color: "#ffeaea",
+          fontSize: 12
+        }
+      },
+      emphasis: {
+        show: true,
+        textStyle: {
+          color: "#51a1a1",
+          //renderMap2中的颜色不一样
+          // color: "#7fffff",
+          fontSize: 12
+        }
+      }
+    },
+    itemStyle: {
+      normal: {
+        color: '#F4E925',
+        shadowBlur: 8,
+        shadowColor: '#05C3F9'
+      }
+    },
+    zlevel: 1
+  },
+  {
+    name: '短信发送量',
+    type: 'scatter',
+    coordinateSystem: 'geo',
+    data: cityData,
+    symbolSize: ssize,
+    label: {
+      normal: {
+        show: false
+      },
+      emphasis: {
+        show: false
+      }
+    },
+    itemStyle: {
+      emphasis: {
+        borderColor: '#fff',
+        borderWidth: 1
+      }
     }
+  }
   ];
 
   window.onresize = function () {
@@ -398,86 +400,86 @@ function renderMap2(map, data, cityData) {
       },
   };*/
   option.series = [{
-      name: map,
-      type: 'effectScatter',
-      map: 'china',
-      coordinateSystem: 'geo',
-      data: data,
-      roam: false,
-      left: 10,
-      top: 'center',
-      height: '80%',
-      selectedMode: 'single',
-      symbolSize: 6,
-      showEffectOn: 'render',
-      rippleEffect: {
-        brushType: 'stroke'
-      },
-      hoverAnimation: true,
-      nameMap: {
-        'china': '中国'
-      },
-      tooltip: {
-        trigger: 'item',
-        formatter: function (params) {
-          if (typeof (params.value)[2] == "undefined") {
-            return params.name + ' : ' + params.value;
-          } else {
-            return params.name + ' : ' + params[2].value;
-          }
-        }
-      },
-      label: {
-        normal: {
-          show: true,
-          formatter: '{b}',
-          position: 'right',
-          textStyle: {
-            color: "#ffeaea",
-            fontSize: 12
-          }
-        },
-        emphasis: {
-          show: true,
-          textStyle: {
-            color: "#7fffff",
-            fontSize: 12
-          }
-        }
-      },
-      itemStyle: {
-        normal: {
-          color: '#F4E925',
-          shadowBlur: 8,
-          shadowColor: '#05C3F9'
-        }
-      },
-      zlevel: 1
+    name: map,
+    type: 'effectScatter',
+    map: 'china',
+    coordinateSystem: 'geo',
+    data: data,
+    roam: false,
+    left: 10,
+    top: 'center',
+    height: '80%',
+    selectedMode: 'single',
+    symbolSize: 6,
+    showEffectOn: 'render',
+    rippleEffect: {
+      brushType: 'stroke'
     },
-    {
-      name: '短信发送量',
-      type: 'scatter',
-      coordinateSystem: 'geo',
-      data: cityData,
-      // symbolSize: function (val) {
-      //   return val[2] / 300
-      // },
-      symbolSize: 5,
-      label: {
-        normal: {
-          show: false
-        },
-        emphasis: {
-          show: false
-        }
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: '#fff',
-          borderWidth: 1
+    hoverAnimation: true,
+    nameMap: {
+      'china': '中国'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) {
+        if (typeof (params.value)[2] == "undefined") {
+          return params.name + ' : ' + params.value;
+        } else {
+          return params.name + ' : ' + params[2].value;
         }
       }
+    },
+    label: {
+      normal: {
+        show: true,
+        formatter: '{b}',
+        position: 'right',
+        textStyle: {
+          color: "#ffeaea",
+          fontSize: 12
+        }
+      },
+      emphasis: {
+        show: true,
+        textStyle: {
+          color: "#7fffff",
+          fontSize: 12
+        }
+      }
+    },
+    itemStyle: {
+      normal: {
+        color: '#F4E925',
+        shadowBlur: 8,
+        shadowColor: '#05C3F9'
+      }
+    },
+    zlevel: 1
+  },
+  {
+    name: '短信发送量',
+    type: 'scatter',
+    coordinateSystem: 'geo',
+    data: cityData,
+    // symbolSize: function (val) {
+    //   return val[2] / 300
+    // },
+    symbolSize: 5,
+    label: {
+      normal: {
+        show: false
+      },
+      emphasis: {
+        show: false
+      }
+    },
+    itemStyle: {
+      emphasis: {
+        borderColor: '#fff',
+        borderWidth: 1
+      }
     }
+  }
   ];
 
   window.onresize = function () {
@@ -487,3 +489,59 @@ function renderMap2(map, data, cityData) {
   chart.setOption(option);
 
 }
+
+
+
+var queryDate = "";
+function dataTime() {
+  var d = new Date();
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1;
+  if (month < 10) {
+    month = "0" + month;
+  }
+  var dt = d.getDate();
+  if (dt < 10) {
+    dt = "0" + dt;
+  }
+  var today = year + "-" + month + "-" + dt;
+  queryDate = today;
+}
+dataTime();
+console.log(queryDate)
+var allData;
+var chinaCity = [];
+$.ajax({
+  type: 'post',
+  // async: false,
+  // url: "http://10.162.26.182:10001/electronicFence/hallSendQuery",
+  url: "http://10.162.26.182:10001/electronicFence/getHallMessage",
+  data: {
+    orderId: '74b2xsa20180523152239',
+    hallId: '74b2xsa',
+    // queryDate:queryDate,
+    queryDate: '2018-06-19',
+  },
+  success: function (result) {
+    console.log(result);
+    allData = result.value;
+    for (var i = 0; i < result.value.length; i++) {
+      var value = [];
+      var v1 = parseFloat(result.value[i].hallLng)
+      var v2 = parseFloat(result.value[i].hallLat)
+      var v3 = parseFloat(result.value[i].sendnum)
+      chinaCity.push({
+        name: result.value[i].hallName,
+        value: value.concat(v1, v2, v3)
+      })
+    }
+    // renderMap('china', d, chinaCity);
+  },
+  error: function () {
+    console.log("请求失败")
+  }
+});
+console.log(chinaCity);
+console.log(allData);
+/* 请求后台数据 end */
+// endregion
