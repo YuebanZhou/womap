@@ -46,7 +46,7 @@ var provinces = {
 var special = ["北京", "天津", "上海", "重庆", "香港", "澳门"];
 var mapdata = [];
 //分布热点的大小
-var ssize = 2;
+var ssize = 6;
 //绘制全国地图
 $.getJSON('static/map/china.json', function (data) {
   d = [];
@@ -88,7 +88,7 @@ chart.on('click', function (params) {
     //如果是【直辖市/特别行政区】只有二级下钻
     if (special.indexOf(params.name) >= 0) {
       console.log("特殊区域");
-      renderMap2('china', mapdata);
+      renderMap('china', mapdata);
     } else {
       //显示县级地图
       console.log("第二级下钻到第三级");
@@ -101,7 +101,7 @@ chart.on('click', function (params) {
             value: data.features[i].properties.cp
           })
         }
-        renderMap2(params.name, d);
+        renderMap(params.name, d);
       });
     }
   } else {
@@ -133,7 +133,7 @@ var option = {
   tooltip: {
     trigger: 'item',
     formatter: function (params) {
-      return params.name + ' : ' + params.value[2];
+      return params.name + ' 短信发送量: ' + params.value[2];
     }
   },
   legend: {
@@ -151,7 +151,7 @@ var option = {
     top: 'bottom',
     calculable: true,
     inRange: {
-      color: ['#06ebff', '#EAC70A', '#D90A0A']
+      color: ['#DAE004', '#F59701', '#C01C23']
     },
     textStyle: {
       color: '#fff'
@@ -208,78 +208,81 @@ function renderMap(map, data) {
   };*/
   //渲染坐标动点
 
-  option.series = [{
-    name: map,
-    type: 'effectScatter',
-    map: 'china',
-    coordinateSystem: 'geo',
-    data: data,
-    roam: false,
-    left: 10,
-    top: 'center',
-    height: '80%',
-    selectedMode: 'single',
-    symbolSize: 6,
-    showEffectOn: 'render',
-    rippleEffect: {
-      brushType: 'stroke'
-    },
-    hoverAnimation: true,
-    nameMap: {
-      'china': '中国'
-    },
-    tooltip: {
-      trigger: 'item',
-      formatter: function (params) {
-        if (typeof (params.value)[2] == "undefined") {
-          return params.name + ' : ' + params.value;
-        } else {
-          return params.name + ' : ' + params[2].value;
-        }
-      }
-    },
-    label: {
-      normal: {
-        show: true,
-        formatter: '{b}',
-        position: 'right',
-        textStyle: {
-          color: "#ffeaea",
-          fontSize: 12
+  option.series = [
+    {
+      name: map,
+      type: 'effectScatter',
+      map: 'china',
+      coordinateSystem: 'geo',
+      data: data,
+      roam: false,
+      left: 10,
+      top: 'center',
+      height: '80%',
+      selectedMode: 'single',
+      symbolSize: 6,
+      showEffectOn: 'render',
+      rippleEffect: {
+        brushType: 'stroke'
+      },
+      hoverAnimation: true,
+      nameMap: {
+        'china': '中国'
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: function (params) {
+          if (typeof (params.value)[2] == "undefined") {
+            return params.name + ' : ' + params.value;
+          } else {
+            return params.name + ' : ' + params[2].value;
+          }
         }
       },
-      emphasis: {
-        show: true,
-        textStyle: {
-          color: "#51a1a1",
-          //renderMap2中的颜色不一样
-          // color: "#7fffff",
-          fontSize: 12
+      label: {
+        normal: {
+          show: true,
+          formatter: '{b}',
+          position: 'right',
+          textStyle: {
+            color: "#ffeaea",
+            fontSize: 12
+          }
+        },
+        emphasis: {
+          show: true,
+          textStyle: {
+            color: "#51a1a1",
+            //renderMap2中的颜色不一样
+            // color: "#7fffff",
+            fontSize: 12
+          }
         }
-      }
+      },
+      itemStyle: {
+        normal: {
+          color: '#F4E925',
+          shadowBlur: 8,
+          shadowColor: '#05C3F9'
+        }
+      },
+      zlevel: 1
     },
-    itemStyle: {
-      normal: {
-        color: '#F4E925',
-        shadowBlur: 8,
-        shadowColor: '#05C3F9'
-      }
-    },
-    zlevel: 1
-  }, {
-    //热力散点图
-    name: 'dot',
-    type: 'scatter',
-    map: map,
-    // mapType: map,
-    //使用地理坐标系
-    coordinateSystem: 'geo',
-    data: sdata,
-    roam: false,
-    //selectedMode: 'single',
-    symbolSize: 4,
-    zlevel: 0,
-  }
+    {
+      //热力散点图
+      name: 'dot',
+      type: 'scatter',
+      map: map,
+      // mapType: map,
+      //使用地理坐标系
+      coordinateSystem: 'geo',
+      // data: sdata,
+      data: sdata2,
+      roam: false,
+      //selectedMode: 'single',
+      symbolSize: 6,
+      zlevel: 0,
+    }
   ];
 
   window.onresize = function () {
@@ -287,129 +290,5 @@ function renderMap(map, data) {
   }
   //渲染地图
   chart.setOption(option);
-}
-
-function renderMap2(map, data) {
-  option.title.subtext = map;
-  option.geo = {
-    show: true,
-    map: map,
-    left: 10,
-    top: 'center',
-    height: '80%',
-    label: {
-      normal: {
-        show: false
-      },
-      emphasis: {
-        show: false,
-      }
-    },
-    roam: false,
-    itemStyle: {
-      normal: {
-        areaColor: '#07265a',
-        borderColor: '#1a4f62',
-        borderWidth: 1,
-        shadowColor: 'rgba(63, 218, 255, 0.1)',
-        shadowBlur: 20
-      },
-      emphasis: {
-        areaColor: '#07265a',
-      }
-    }
-  };
-  option.toolbox = {
-    show: true,
-    orient: 'vertical',
-    left: 10,
-    top: 60,
-    feature: {
-      dataView: {
-        readOnly: false
-      },
-      restore: {},
-      saveAsImage: {}
-    }
-  };
-  option.series = [{
-    name: map,
-    type: 'effectScatter',
-    map: 'china',
-    coordinateSystem: 'geo',
-    data: data,
-    roam: false,
-    left: 10,
-    top: 'center',
-    height: '80%',
-    selectedMode: 'single',
-    symbolSize: 6,
-    showEffectOn: 'render',
-    rippleEffect: {
-      brushType: 'stroke'
-    },
-    hoverAnimation: true,
-    nameMap: {
-      'china': '中国'
-    },
-    tooltip: {
-      trigger: 'item',
-      formatter: function (params) {
-        if (typeof (params.value)[2] == "undefined") {
-          return params.name + ' : ' + params.value;
-        } else {
-          return params.name + ' : ' + params[2].value;
-        }
-      }
-    },
-    label: {
-      normal: {
-        show: true,
-        formatter: '{b}',
-        position: 'right',
-        textStyle: {
-          color: "#ffeaea",
-          fontSize: 12
-        }
-      },
-      emphasis: {
-        show: true,
-        textStyle: {
-          color: "#7fffff",
-          fontSize: 12
-        }
-      }
-    },
-    itemStyle: {
-      normal: {
-        color: '#F4E925',
-        shadowBlur: 8,
-        shadowColor: '#05C3F9'
-      }
-    },
-    zlevel: 1
-  }, {
-    //热力散点图
-    name: 'dot',
-    type: 'scatter',
-    map: map,
-    // mapType: map,
-    //使用地理坐标系
-    coordinateSystem: 'geo',
-    data: sdata,
-    roam: false,
-    //selectedMode: 'single',
-    symbolSize: 4,
-    zlevel: 0,
-  }
-
-  ];
-
-  window.onresize = function () {
-    chart.resize(); //使第一个图表适应
-  }
-  //渲染地图
-  chart.setOption(option);
-
 }
 

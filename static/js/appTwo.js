@@ -1,8 +1,9 @@
-var mainChart = echarts.init(document.getElementById('main-two'));
 //判定定时器是否启动的flag
 var flag = false;
 //判定定时器是否存在
 var exit = false;
+// 定时器
+var mainChart = echarts.init(document.getElementById('main-two'));
 //窗口宽度发生改变宽度适配
 $(window).resize(function () {
   // chartsize()
@@ -262,7 +263,7 @@ function econsole() {
   //清理完定时器之后，手动将flag变成true，这样定时器就可以再次运行
   flag = true;
 }
-
+// 获取当前的时刻
 function dataTime() {
   var d = new Date();
   var year = d.getFullYear();
@@ -290,22 +291,3 @@ function dataTime() {
 }
 dataTime();
 
-
-/*
-$.ajax({
-  type: 'post',
-  async: false,
-  url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
-  data: {
-    // send: '201806140935'
-    send: queryDate
-  },
-  success: function (result) {
-    console.log(result);
-    var sendnum = result.code
-    console.log(sendnum);
-  },
-  error: function () {
-    console.log("请求失败")
-  }
-});*/
