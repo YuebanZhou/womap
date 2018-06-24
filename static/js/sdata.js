@@ -1,4 +1,4 @@
-//城市对应ID
+//假数据
 var sdata = [
   {
     "name": "qinghai-0000",
@@ -1603,50 +1603,4 @@ var sdata = [
   },
 
 ];
-var sdata2 = [];
-$.ajax({
-  type: 'post',
-  url: 'http://10.162.26.182:10001/electronicFence/getHallMessage',
-  data: {
-    orderId: '74b2xsa20180523152239',
-    hallId: '74b2xsa',
-    // queryDate:queryDate,
-    queryDate: '2018-06-19',
-  },
-  success: function (result) {
-    console.log('请求成功');
-    console.log(result);
-    for (var i = 0; i < result.value.length; i++) {
-      var arr = []
-      arr.push(result.value[i].hallLng, result.value[i].hallLat, result.value[i].sendnum)
-      sdata2.push({
-        // name:result.value[i].hallName,
-        name: result.value[i].hallCity + "门店",
-        value: arr
-      })
-    }
-  },
-  error: function () {
-    console.log('请求失败');
 
-  },
-})
-var sortBy = function (attr, rev) {
-  //第二个参数没有传递 默认升序排列
-  if (rev == undefined) {
-    rev = 1;
-  } else {
-    rev = (rev) ? 1 : -1;
-  }
-  return function (a, b) {
-    a = a[attr];
-    b = b[attr];
-    if (a < b) {
-      return rev * -1;
-    }
-    if (a > b) {
-      return rev * 1;
-    }
-    return 0;
-  }
-}

@@ -292,3 +292,142 @@ function renderMap(map, data) {
   chart.setOption(option);
 }
 
+// 真实数据
+var sdata2 = [];
+var arr = [];
+var sortarr = [];
+// 获取当前年月日
+var myDate = new Date();
+var year = myDate.getFullYear();
+var month = myDate.getMonth() + 1;
+var date = myDate.getDate();
+// 短横拼接
+var queryDate = year + "-" + month + "-" + date;
+console.log(queryDate);
+
+$.ajax({
+  type: 'post',
+  url: 'http://10.162.26.182:10001/electronicFence/getHallMessage',
+  data: {
+    orderId: '74b2xsa20180523152239',
+    hallId: '74b2xsa',
+    // queryDate: queryDate,
+    queryDate: '2018-05-24',
+  },
+  success: function (result) {
+    console.log('请求成功');
+    console.log(result);
+    // 渲染全国散点图 start
+    for (var i = 0; i < result.value.length; i++) {
+      // 每次都清空arr数组，push效果不会叠加
+      var arr = [];
+      arr.push(result.value[i].hallLng, result.value[i].hallLat, result.value[i].sendnum);
+      sdata2.push({
+        // name:result.value[i].hallName,
+        name: result.value[i].hallCity + "门店",
+        value: arr
+      });
+
+    }
+    renderMap('china', mapdata);
+    // 渲染全国散点图 end
+
+    // 门店top5数据渲染 start
+    for (var i = 0; i < sdata2.length; i++) {
+      sortarr.push({
+        name: sdata2[i].name,
+        value: sdata2[i].value[2]
+      })
+    }
+    sortarr.sort(sortBy('value', false));
+
+    for (var i = 1; i < $(".ibox2 tr").length; i++) {
+      $(".ibox2").find("tr").eq(i).find("td").eq(0).text(sortarr[i - 1].name);
+      $(".ibox2").find("tr").eq(i).find("td").eq(1).text(sortarr[i - 1].value);
+    }
+    // 门店top5数据渲染 end
+
+    // 省份top5数据渲染 start
+    $.getJSON('static/map/china.json', function (data) {
+      // 1.按照省份名称不同，归类，将省份名称一样的，放在一起
+      // 2.归类的时候，直接对发送量进行累加，这样就不用对对象进行累加计算
+      // 3.归类后的数组，进行此项和后一项的对比，如果不一样，记录这一项的省份名称和发送量（此时发送量已是最终累加结果）
+      // 4.对比后的数组放入新数组，进行数据渲染
+
+      
+      // 发送量递增，初始值设置为0
+      var num=0;
+      // 归类之后的对象数组
+      var temp=[];
+
+      // 遍历本地json文件，获取31个省份名称，方便对比
+      for (var i = 0; i < data.features.length; i++) {
+        // console.log(data.features[i].properties.name);
+        
+        for (var j = 0; j < result.value.length; j++) {
+          // 遍历后台数据，获取省份名称，和31个省份对比
+          if(result.value[j].hallProv==data.features[i].properties.name){
+            // 这里自动按照省份名称归类排序
+            temp.push({
+              key:result.value[j].hallProv,
+              // 发送量累加
+              val:parseInt(num+=result.value[j].sendnum)
+            })
+          }
+        }
+      }
+      // console.log(temp);
+      // temp为对象数组，不能直接比较相邻两项的值
+      // 新建一个临时数组，只比较temp中的key
+      var tempchild=[];
+      // 最终数组
+      var arr=[];
+      for(var i=0;i<temp.length;i++){
+        tempchild.push(temp[i].key);
+      }
+      for(var i=0;i<tempchild.length;i++){
+        if(tempchild[i]!=tempchild[i+1]){
+          // console.log(i);
+          arr.push({
+            name:tempchild[i],
+            sendnum:temp[i].val
+          })
+        }
+      }
+      
+      arr.sort(sortBy('sendnum', false));
+      console.log(arr);
+      for (var i = 1; i < $(".ibox1 tr").length; i++) {
+        $(".ibox1").find("tr").eq(i).find("td").eq(0).text(arr[i - 1].name);
+        $(".ibox1").find("tr").eq(i).find("td").eq(1).text(arr[i - 1].sendnum);
+      }
+  
+    });
+
+    // 省份top5数据渲染 end
+  },
+  error: function () {
+    console.log('请求失败');
+
+  },
+})
+// 对象排序
+var sortBy = function (attr, rev) {
+  //第二个参数没有传递 默认升序排列
+  if (rev == undefined) {
+    rev = 1;
+  } else {
+    rev = (rev) ? 1 : -1;
+  }
+  return function (a, b) {
+    a = a[attr];
+    b = b[attr];
+    if (a < b) {
+      return rev * -1;
+    }
+    if (a > b) {
+      return rev * 1;
+    }
+    return 0;
+  }
+}
