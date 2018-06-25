@@ -513,14 +513,15 @@ var allData;
 var chinaCity = [];
 $.ajax({
   type: 'post',
-  // async: false,
+  // 先加载地图，获取到数据之后再渲染
+  async: true,
   // url: "http://10.162.26.182:10001/electronicFence/hallSendQuery",
   url: "http://10.162.26.182:10001/electronicFence/getHallMessage",
   data: {
     orderId: '74b2xsa20180523152239',
     hallId: '74b2xsa',
     // queryDate:queryDate,
-    queryDate: '2018-06-19',
+    queryDate: '2018-06-15',
   },
   success: function (result) {
     console.log(result);

@@ -2,13 +2,78 @@
 var flag = false;
 //判定定时器是否存在
 var exit = false;
-// 定时器
+// 获取canvas盒子
 var mainChart = echarts.init(document.getElementById('main-two'));
+// 时间数组，用于存放当前时刻以及前五分钟时刻
+var arr = [];
+// 用来存放arr对应的发送量数组
+var arrdata = [50,50,50,50,50,50,50,50,50,50];
+// 发送量初始值
+var temp = 0;
+// 获取时间
+dataTime();
+
+
+//点击查看详情按钮
+$(".consul").click(function () {
+  //隐藏动图，显示动态折线图
+  $("#main").hide();
+  $("#movechart").show();
+  $(".ibox3").hide();
+  //折线图适配屏幕
+  // chartsize();
+  // getMessage()
+  //手动将标识变成true，这样下面的定时器就可以运行
+  flag = true;
+  settimer();
+  console.log('查看详情');
+  // 将数据push进数组
+  // for (var i = 0; i < arr.length; i++) {
+  //   arrdata.push(getmesage(arr[i]))
+  // }
+})
+//点击返回全国地图按钮
+$(".return").click(function () {
+  //全国地图显示
+  //动态折线图隐藏
+  $("#main").show()
+  $("#movechart").hide()
+  $.getJSON('static/map/china.json', function (data) {
+    d = [];
+    for (var i = 0; i < data.features.length; i++) {
+      //将地点的名称和cp坐标传入d数组
+      d.push({
+        name: data.features[i].properties.name,
+        value: data.features[i].properties.cp,
+      })
+    }
+    mapdata = d;
+    //注册地图
+    echarts.registerMap('china', data);
+    //绘制地图
+    renderMap('china', d, chinaCity);
+
+  });
+  //清理定时器
+  if (exit) {
+    econsole()
+  }
+  exit = false;
+})
+//重启定时器按钮
+$("#restart").click(function () {
+  console.log("restart");
+  settimer();
+})
+
+
+
+
 //窗口宽度发生改变宽度适配
 $(window).resize(function () {
   // chartsize()
 })
-
+// 绘制折线图
 mainoption = {
   title: {
     text: '动态数据',
@@ -74,7 +139,7 @@ mainoption = {
         //将字符串中非数字转换成空
         res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
         //日期为当前日期减去2000
-        now = new Date(now - 2000);
+        now = new Date(now - 1000 * 5);
       }
       return res;
     })(),
@@ -99,7 +164,7 @@ mainoption = {
     nameTextStyle: {
       color: '#fff'
     },
-    max: 50000,
+    // max: 50000,
     min: 0,
     boundaryGap: [0.2, 0.2],
     axisLabel: {
@@ -119,20 +184,21 @@ mainoption = {
   series: [{
     name: '短信发送量',
     type: 'line',
-    data: (function () {
-      //临时数组
-      var res = [];
-      //数组长度
-      var len = 0;
-      while (len < 10) {
-        //将随机数push进临时数组
-        //toFixed()将随机数四舍五入，括号中参数表示小数的位数
-        res.push((Math.random() * 50000).toFixed(1) - 0);
-        //push进一个随机数，长度就+1
-        len++;
-      }
-      return res;
-    })(),
+    // data: (function () {
+    //   //临时数组
+    //   var res = [];
+    //   //数组长度
+    //   var len = 0;
+    //   while (len < 10) {
+    //     //将随机数push进临时数组
+    //     //toFixed()将随机数四舍五入，括号中参数表示小数的位数
+    //     res.push((Math.random() * 50000).toFixed(1) - 0);
+    //     //push进一个随机数，长度就+1
+    //     len++;
+    //   }
+    //   return res;
+    // })(),
+    data: arrdata
 
   }],
   dataZoom: [{
@@ -167,60 +233,7 @@ mainoption = {
   }
 };
 mainChart.setOption(mainoption);
-//点击查看详情按钮
-$(".consul").click(function () {
-  //隐藏动图，显示动态折线图
-  $("#main").hide();
-  $("#movechart").show();
-  //折线图适配屏幕
-  // chartsize();
-  // getMessage()
-  //手动将标识变成true，这样下面的定时器就可以运行
-  flag = true;
-  settimer();
-})
-//点击返回全国地图按钮
-$(".return").click(function () {
-  //全国地图显示
-  //动态折线图隐藏
-  $("#main").show()
-  $("#movechart").hide()
-  $.getJSON('static/map/china.json', function (data) {
-    d = [];
-    for (var i = 0; i < data.features.length; i++) {
-      //将地点的名称和cp坐标传入d数组
-      d.push({
-        name: data.features[i].properties.name,
-        value: data.features[i].properties.cp,
-      })
-    }
-    mapdata = d;
-    //注册地图
-    echarts.registerMap('china', data);
-    //绘制地图
-    renderMap('china', d, chinaCity);
 
-  });
-  //清理定时器
-  if (exit) {
-    econsole()
-  }
-  exit = false;
-})
-//重启定时器按钮
-$("#restart").click(function () {
-  console.log("restart");
-  settimer();
-})
-
-//点击查看详情按钮宽度适配
-function chartsize() {
-  // console.log($("#movechart").width());
-  var chartwidth = $("#movechart").width() * 0.8
-  mainoption.grid = {
-    width: chartwidth
-  }
-}
 
 //定时器
 function settimer() {
@@ -234,7 +247,8 @@ function settimer() {
       //将数组的第一个元素删除并且返回第一个元素的值
       //data0.shift();
       //Math.round四舍五入
-      data0.push(Math.round(Math.random() * 50000));
+      data0.push(Math.round(Math.random() * 200));
+      // data0.push(getmesage(dataTimenow()));
       //将x轴data第一项删除
       //mainoption.xAxis.data.shift();
       //将当前时间push进data数组
@@ -249,7 +263,7 @@ function settimer() {
 
       //绘制chart
       mainChart.setOption(mainoption);
-    }, 1000);
+    }, 1000 * 5);
 
   };
   //调用定时器结束之后，手动将flag恢复原值
@@ -263,31 +277,84 @@ function econsole() {
   //清理完定时器之后，手动将flag变成true，这样定时器就可以再次运行
   flag = true;
 }
-// 获取当前的时刻
+
+// 获取当前十个时间
 function dataTime() {
-  var d = new Date();
-  var year = d.getFullYear();
-  var month = d.getMonth() + 1;
-  var dt = d.getDate();
-  var hour = d.getHours();
-  var minute = d.getMinutes();
-  if (month < 10) {
-    month = "0" + month;
-  }
-  if (dt < 10) {
-    dt = "0" + dt;
-  }
-  if (hour < 10) {
-    hour = "0" + hour;
-  }
-  if (minute < 10) {
-    minute = "0" + minute
-  }
-  var today = year + month + dt + hour + minute;
-  queryDate = today;
-  console.log(queryDate);
+  for (var i = 0; i < 10; i++) {
+    var d = new Date();
+    var ndt = new Date(d.getTime() - 1000 * 60 * i);//将转换之后的时间减去一分钟
+    var year = ndt.getFullYear() + "";
+    var month = ndt.getMonth() + 1 + "";
+    var day = ndt.getDate() + "";
+    var hour = ndt.getHours() + "";
+    var minute = ndt.getMinutes() + "";
+    if (month < 10 && month >= 0) {
+      month = "0" + month;
+    }
+    if (day < 10 && day >= 0) {
+      day = "0" + day;
+    }
+    if (hour < 10 && hour >= 0) {
+      hour = "0" + hour;
+    }
+    if (minute < 10 && minute >= 0) {
+      minute = "0" + minute
+    }
+    today = year + month + day + hour + minute;
+    arr.push(today);
 
-  return queryDate;
+  }
+  // 翻转数组
+  arr.reverse()
+
 }
-dataTime();
+// 获取当前时间
+function dataTimen() {
+  for (var i = 0; i < 10; i++) {
+    var dn = new Date();
+    var yearn = dn.getFullYear() + "";
+    var monthn = dn.getMonth() + 1 + "";
+    var dayn = dn.getDate() + "";
+    var hourn = dn.getHours() + "";
+    var minuten = dn.getMinutes() + "";
+    if (monthn < 10 && monthn >= 0) {
+      monthn = "0" + monthn;
+    }
+    if (dayn < 10 && dayn >= 0) {
+      dayn = "0" + dayn;
+    }
+    if (hourn < 10 && hourn >= 0) {
+      hourn = "0" + hourn;
+    }
+    if (minuten < 10 && minuten >= 0) {
+      minuten = "0" + minuten
+    }
+    todayn = yearn + monthn + dayn + hourn + minuten;
+  }
+  console.log(todayn);
+  return todayn
+}
+dataTimen()
 
+//获取后台数据 
+function getmesage(queryDate) {
+  $.ajax({
+    type: 'post',
+    // async: true,
+    async: false,
+    url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
+    data: {
+      send: queryDate
+    },
+    success: function (result) {
+      console.log("请求成功");
+      console.log(result);
+      temp = result.code
+    },
+    error: function () {
+      console.log("请求失败")
+
+    }
+  });
+  return temp
+}
