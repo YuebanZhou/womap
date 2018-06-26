@@ -1,3 +1,9 @@
+// 真实数据
+var sdata2 = [];
+var arr = [];
+var sortarr1 = [];
+var sortarr2 = [];
+
 //地图容器
 var chart = echarts.init(document.getElementById('main'));
 //34个省、市、自治区的名字拼音映射数组
@@ -64,7 +70,7 @@ $.getJSON('static/map/china.json', function (data) {
   //注册地图
   echarts.registerMap('china', data);
   //绘制地图
-  renderMap('china', d);
+  renderMap('china', d, sdata2);
 });
 
 //地图点击事件
@@ -81,14 +87,34 @@ chart.on('click', function (params) {
           value: data.features[i].properties.cp,
         })
       }
-
-      renderMap(params.name, d);
+      // 临时数组，承载本省门店
+      var temp = [];
+      for (var i = 0; i < sdata2.length; i++) {
+        if (params.name == sdata2[i].pro) {
+          temp.push({
+            name: sdata2[i].name,
+            value: sdata2[i].value
+          })
+        }
+      }
+      renderMap(params.name, d, temp);
     });
   } else if (params.name in cityMap) {
     //如果是【直辖市/特别行政区】只有二级下钻
     if (special.indexOf(params.name) >= 0) {
       console.log("特殊区域");
-      renderMap('china', mapdata);
+      // 临时数组，承载特殊区域门店
+      var temp = [];
+      for (var i = 0; i < sdata2.length; i++) {
+        if (params.name == sdata2[i].pro) {
+          temp.push({
+            name: sdata2[i].name,
+            value: sdata2[i].value
+          })
+        }
+      }
+
+      renderMap('china', mapdata, temp);
     } else {
       //显示县级地图
       console.log("第二级下钻到第三级");
@@ -101,11 +127,11 @@ chart.on('click', function (params) {
             value: data.features[i].properties.cp
           })
         }
-        renderMap(params.name, d);
+        renderMap(params.name, d, sdata2);
       });
     }
   } else {
-    renderMap('china', mapdata);
+    renderMap('china', mapdata, sdata2);
   }
 });
 
@@ -162,7 +188,7 @@ var option = {
 
 
 //渲染地图
-function renderMap(map, data) {
+function renderMap(map, data, sdata2) {
   //二级标题
   option.title.subtext = map;
   //渲染地图
@@ -292,10 +318,6 @@ function renderMap(map, data) {
   chart.setOption(option);
 }
 
-// 真实数据
-var sdata2 = [];
-var arr = [];
-var sortarr = [];
 // 获取当前年月日
 var myDate = new Date();
 var year = myDate.getFullYear();
@@ -303,16 +325,14 @@ var month = myDate.getMonth() + 1;
 var date = myDate.getDate();
 // 短横拼接
 var queryDate = year + "-" + month + "-" + date;
-console.log(queryDate);
-
 $.ajax({
   type: 'post',
   url: 'http://10.162.26.182:10001/electronicFence/getHallMessage',
   data: {
-    orderId: '74b2xsa20180523152239',
-    hallId: '74b2xsa',
+    // orderId: '74b2xsa20180523152239',
+    // hallId: '74b2xsa',
     // queryDate: queryDate,
-    queryDate: '2018-05-24',
+    queryDate: '2018-06-01',
   },
   success: function (result) {
     console.log('请求成功');
@@ -321,88 +341,64 @@ $.ajax({
     for (var i = 0; i < result.value.length; i++) {
       // 每次都清空arr数组，push效果不会叠加
       var arr = [];
+      // 地理位置和发送量
       arr.push(result.value[i].hallLng, result.value[i].hallLat, result.value[i].sendnum);
+      // 后台真是数据，包括门店名称，发送量以及地理位置，所属省份名称
       sdata2.push({
-        // name:result.value[i].hallName,
-        name: result.value[i].hallCity + "门店",
-        value: arr
+        name: result.value[i].hallName,
+        value: arr,
+        pro: result.value[i].hallProv
       });
 
     }
-    renderMap('china', mapdata);
+    // 获取到后台数据之后默认渲染一遍地图
+    renderMap('china', mapdata, sdata2);
     // 渲染全国散点图 end
 
     // 门店top5数据渲染 start
     for (var i = 0; i < sdata2.length; i++) {
-      sortarr.push({
+      // 只比较发送量，需要的数据只有门店名称和发送量
+      sortarr1.push({
         name: sdata2[i].name,
         value: sdata2[i].value[2]
       })
     }
-    sortarr.sort(sortBy('value', false));
-
+    // 根据value属性进行排序
+    sortarr1.sort(sortBy('value', false));
+    // 内容渲染
     for (var i = 1; i < $(".ibox2 tr").length; i++) {
-      $(".ibox2").find("tr").eq(i).find("td").eq(0).text(sortarr[i - 1].name);
-      $(".ibox2").find("tr").eq(i).find("td").eq(1).text(sortarr[i - 1].value);
+      $(".ibox2").find("tr").eq(i).find("td").eq(0).text(sortarr1[i - 1].name);
+      $(".ibox2").find("tr").eq(i).find("td").eq(1).text(sortarr1[i - 1].value);
     }
     // 门店top5数据渲染 end
 
     // 省份top5数据渲染 start
-    $.getJSON('static/map/china.json', function (data) {
-      // 1.按照省份名称不同，归类，将省份名称一样的，放在一起
-      // 2.归类的时候，直接对发送量进行累加，这样就不用对对象进行累加计算
-      // 3.归类后的数组，进行此项和后一项的对比，如果不一样，记录这一项的省份名称和发送量（此时发送量已是最终累加结果）
-      // 4.对比后的数组放入新数组，进行数据渲染
+    var pro31 = ["河北", "山西", "内蒙古", "辽宁", "吉林",
+      "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "山东",
+      "河南", "湖北", "湖南", "广东", "广西", "海南", "四川",
+      "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏",
+      "新疆", "北京", "天津", "上海", "重庆",
+    ];
+    // 将门店所属省份名称和发送量放到一个对象中
+    for (var i = 0; i < result.value.length; i++) {
+      sortarr2.push({
+        name: result.value[i].hallProv,
+        value: result.value[i].sendnum
+      })
+    }
 
-      
-      // 发送量递增，初始值设置为0
-      var num=0;
-      // 归类之后的对象数组
-      var temp=[];
 
-      // 遍历本地json文件，获取31个省份名称，方便对比
-      for (var i = 0; i < data.features.length; i++) {
-        // console.log(data.features[i].properties.name);
-        
-        for (var j = 0; j < result.value.length; j++) {
-          // 遍历后台数据，获取省份名称，和31个省份对比
-          if(result.value[j].hallProv==data.features[i].properties.name){
-            // 这里自动按照省份名称归类排序
-            temp.push({
-              key:result.value[j].hallProv,
-              // 发送量累加
-              val:parseInt(num+=result.value[j].sendnum)
-            })
-          }
-        }
-      }
-      // console.log(temp);
-      // temp为对象数组，不能直接比较相邻两项的值
-      // 新建一个临时数组，只比较temp中的key
-      var tempchild=[];
-      // 最终数组
-      var arr=[];
-      for(var i=0;i<temp.length;i++){
-        tempchild.push(temp[i].key);
-      }
-      for(var i=0;i<tempchild.length;i++){
-        if(tempchild[i]!=tempchild[i+1]){
-          // console.log(i);
-          arr.push({
-            name:tempchild[i],
-            sendnum:temp[i].val
-          })
-        }
-      }
-      
-      arr.sort(sortBy('sendnum', false));
-      console.log(arr);
-      for (var i = 1; i < $(".ibox1 tr").length; i++) {
-        $(".ibox1").find("tr").eq(i).find("td").eq(0).text(arr[i - 1].name);
-        $(".ibox1").find("tr").eq(i).find("td").eq(1).text(arr[i - 1].sendnum);
-      }
-  
-    });
+    // 对照，发送量累加
+    var namearr=[];
+    var valarr=[];
+    for(var i=0;i<sortarr2.length;i++){
+      namearr.push(sortarr2[i].name);
+      valarr.push(sortarr2[i].value);
+    }
+    
+
+
+
 
     // 省份top5数据渲染 end
   },

@@ -4,6 +4,8 @@ var arr = [];
 var arrdata = [];
 // 发送量初始值
 var temp = 0;
+// 计算请求次数
+var num=0;
 // 获取时间
 dataTime();
 console.log(arr);
@@ -45,8 +47,8 @@ function dataTime() {
 function getmesage(queryDate) {
   $.ajax({
     type: 'post',
-    async: false,
     // async: false,
+    async: true,
     url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
     data: {
       send: queryDate

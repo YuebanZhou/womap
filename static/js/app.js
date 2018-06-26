@@ -250,7 +250,8 @@ function renderMap(map, data, cityData) {
   };*/
   //渲染坐标动点
 
-  option.series = [{
+  option.series = [
+    {
     name: map,
     type: 'effectScatter',
     map: 'china',
