@@ -4,19 +4,20 @@ var flag = false;
 var exit = false;
 // 获取canvas盒子
 var mainChart = echarts.init(document.getElementById('main-two'));
-// 时间数组，用于存放当前时刻以及前五分钟时刻
+// 时间数组，用于存放当前时刻以及往前数十秒时刻
 var arr = [];
 // 用来存放arr对应的发送量数组
-var arrdata = [50,50,50,50,50,50,50,50,50,50];
+var arrdata = [43, 453, 123, 354, 75, 93, 253, 354, 521, 2];
 // 发送量初始值
 var temp = 0;
 // 获取时间
 dataTime();
+console.log(arr);
 
 
 //点击查看详情按钮
 $(".consul").click(function () {
-  //隐藏动图，显示动态折线图
+  //隐藏地图，静态折线图，显示动态折线图
   $("#main").hide();
   $("#movechart").show();
   $(".ibox3").hide();
@@ -34,26 +35,8 @@ $(".consul").click(function () {
 })
 //点击返回全国地图按钮
 $(".return").click(function () {
-  //全国地图显示
-  //动态折线图隐藏
-  $("#main").show()
-  $("#movechart").hide()
-  $.getJSON('static/map/china.json', function (data) {
-    d = [];
-    for (var i = 0; i < data.features.length; i++) {
-      //将地点的名称和cp坐标传入d数组
-      d.push({
-        name: data.features[i].properties.name,
-        value: data.features[i].properties.cp,
-      })
-    }
-    mapdata = d;
-    //注册地图
-    echarts.registerMap('china', data);
-    //绘制地图
-    renderMap('china', d, chinaCity);
-
-  });
+  // 点击返回全国按钮，直接刷新当前页面
+  window.location.reload()
   //清理定时器
   if (exit) {
     econsole()
@@ -65,10 +48,6 @@ $("#restart").click(function () {
   console.log("restart");
   settimer();
 })
-
-
-
-
 //窗口宽度发生改变宽度适配
 $(window).resize(function () {
   // chartsize()
@@ -282,12 +261,13 @@ function econsole() {
 function dataTime() {
   for (var i = 0; i < 10; i++) {
     var d = new Date();
-    var ndt = new Date(d.getTime() - 1000 * 60 * i);//将转换之后的时间减去一分钟
+    var ndt = new Date(d.getTime() - 1000 * 5 * i);//将转换之后的时间减去5秒
     var year = ndt.getFullYear() + "";
     var month = ndt.getMonth() + 1 + "";
     var day = ndt.getDate() + "";
     var hour = ndt.getHours() + "";
     var minute = ndt.getMinutes() + "";
+    var seconds = ndt.getSeconds() + "";
     if (month < 10 && month >= 0) {
       month = "0" + month;
     }
@@ -300,7 +280,10 @@ function dataTime() {
     if (minute < 10 && minute >= 0) {
       minute = "0" + minute
     }
-    today = year + month + day + hour + minute;
+    if (seconds < 10 && seconds >= 0) {
+      seconds = "0" + seconds
+    }
+    today = year + month + day + hour + minute + seconds;
     arr.push(today);
 
   }
@@ -340,8 +323,8 @@ dataTimen()
 function getmesage(queryDate) {
   $.ajax({
     type: 'post',
-    // async: true,
-    async: false,
+    // async: false,
+    async: true,
     url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
     data: {
       send: queryDate
@@ -349,12 +332,11 @@ function getmesage(queryDate) {
     success: function (result) {
       console.log("请求成功");
       console.log(result);
-      temp = result.code
+      temp = result.code;
+
     },
     error: function () {
       console.log("请求失败")
-
     }
   });
-  return temp
 }

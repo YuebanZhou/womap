@@ -47,6 +47,40 @@ var provinces = {
   "香港": "xianggang",
   "澳门": "aomen"
 };
+// 数组放到renderMap调用之前，renderMap的省份formatter功能可以实现
+var pro31 = [
+  { name: "河北", value: 0 },
+  { name: "山西", value: 0 },
+  { name: "内蒙古", value: 0 },
+  { name: "辽宁", value: 0 },
+  { name: "吉林", value: 0 },
+  { name: "黑龙江", value: 0 },
+  { name: "江苏", value: 0 },
+  { name: "浙江", value: 0 },
+  { name: "安徽", value: 0 },
+  { name: "福建", value: 0 },
+  { name: "江西", value: 0 },
+  { name: "山东", value: 0 },
+  { name: "河南", value: 0 },
+  { name: "湖北", value: 0 },
+  { name: "湖南", value: 0 },
+  { name: "广东", value: 0 },
+  { name: "广西", value: 0 },
+  { name: "海南", value: 0 },
+  { name: "四川", value: 0 },
+  { name: "贵州", value: 0 },
+  { name: "云南", value: 0 },
+  { name: "西藏", value: 0 },
+  { name: "陕西", value: 0 },
+  { name: "甘肃", value: 0 },
+  { name: "青海", value: 0 },
+  { name: "宁夏", value: 0 },
+  { name: "新疆", value: 0 },
+  { name: "北京", value: 0 },
+  { name: "天津", value: 0 },
+  { name: "上海", value: 0 },
+  { name: "重庆", value: 0 },
+];
 
 //直辖市和特别行政区-只有二级地图，没有三级地图
 var special = ["北京", "天津", "上海", "重庆", "香港", "澳门"];
@@ -159,7 +193,8 @@ var option = {
   tooltip: {
     trigger: 'item',
     formatter: function (params) {
-      return params.name + ' 短信发送量: ' + params.value[2];
+      // 门店名称&短信发送量
+      return params.name + "<br/>短信发送量:" + params.value[2];
     }
   },
   legend: {
@@ -258,10 +293,11 @@ function renderMap(map, data, sdata2) {
       tooltip: {
         trigger: 'item',
         formatter: function (params) {
-          if (typeof (params.value)[2] == "undefined") {
-            return params.name + ' : ' + params.value;
-          } else {
-            return params.name + ' : ' + params[2].value;
+          // 展示省份总共发送量
+          for(var i=0;i<pro31.length;i++){
+            if(params.name==pro31[i].name){
+              return params.name + "<br/>全地区短信发送量:" + pro31[i].value;
+            }
           }
         }
       },
@@ -369,16 +405,12 @@ $.ajax({
     for (var i = 1; i < $(".ibox2 tr").length; i++) {
       $(".ibox2").find("tr").eq(i).find("td").eq(0).text(sortarr1[i - 1].name);
       $(".ibox2").find("tr").eq(i).find("td").eq(1).text(sortarr1[i - 1].value);
+      // 给td添加title属性，鼠标悬停显示全部
+      $(".ibox2").find("tr").eq(i).find("td").eq(0).attr("title",sortarr1[i - 1].name);
     }
     // 门店top5数据渲染 end
 
     // 省份top5数据渲染 start
-    var pro31 = ["河北", "山西", "内蒙古", "辽宁", "吉林",
-      "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "山东",
-      "河南", "湖北", "湖南", "广东", "广西", "海南", "四川",
-      "贵州", "云南", "西藏", "陕西", "甘肃", "青海", "宁夏",
-      "新疆", "北京", "天津", "上海", "重庆",
-    ];
     // 将门店所属省份名称和发送量放到一个对象中
     for (var i = 0; i < result.value.length; i++) {
       sortarr2.push({
@@ -386,20 +418,20 @@ $.ajax({
         value: result.value[i].sendnum
       })
     }
-
-
-    // 对照，发送量累加
-    var namearr=[];
-    var valarr=[];
-    for(var i=0;i<sortarr2.length;i++){
-      namearr.push(sortarr2[i].name);
-      valarr.push(sortarr2[i].value);
+    for (var i = 0; i < pro31.length; i++) {
+      for (var j = 0; j < sortarr2.length; j++) {
+        if (pro31[i].name == sortarr2[j].name) {
+          pro31[i].value += parseInt(sortarr2[j].value)
+        }
+      }
     }
-    
-
-
-
-
+    pro31.sort(sortBy('value', false));
+    console.log(pro31);
+    for (var i = 1; i < $(".ibox1 tr").length; i++) {
+      $(".ibox1").find("tr").eq(i).find("td").eq(0).text(pro31[i - 1].name);
+      $(".ibox1").find("tr").eq(i).find("td").eq(1).text(pro31[i - 1].value);
+      // $(".ibox1").find("tr").eq(i).find("td").eq(0).attr("title",pro31[i - 1].name);
+    }
     // 省份top5数据渲染 end
   },
   error: function () {

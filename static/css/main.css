@@ -37,6 +37,7 @@ body.gray-bg {
   position: absolute;
   top: 40px;
   right: 1%;
+  min-height: 270px;
 }
 
 .ibox1 .ibox-content {
@@ -62,6 +63,7 @@ body.gray-bg {
   position: absolute;
   top: 40px;
   right: 20%;
+  min-height: 270px;
 }
 
 .ibox2 .ibox-content {
@@ -81,9 +83,9 @@ body.gray-bg {
 
 .ibox3 {
   position: absolute;
-  top: 345px;
+  bottom: 10px;
   right: 1%;
-  height: 240px;
+  height: 270px;
   width: 37%;
 }
 
@@ -219,8 +221,12 @@ table {
 }
 td {
   width: 50%;
-  word-break:keep-all;/* 不换行 */
-  white-space:nowrap;/* 不换行 */
-  overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
-  text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+  word-break:keep-all;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  cursor: default;
+}
+h5 {
+  cursor: default;
 }
