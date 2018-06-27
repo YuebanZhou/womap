@@ -4,6 +4,7 @@ var arr = [];
 var arrdata = [50,60,45,89,70];
 // 用来存放arr对应的发送量数组，真数据
 var arrdata2=[];
+// 先按照假数据渲染一遍折线图
 drawchartstatic(arrdata)
 // 发送量初始值
 var temp = 0;
@@ -22,7 +23,8 @@ getmesagestatic(arr[4])
 function dataTime() {
   for (var i = 0; i < 5; i++) {
     var d = new Date();
-    var ndt = new Date(d.getTime() - 1000 * 60 * i);//将转换之后的时间减去一分钟
+    //将转换之后的时间减去一分钟
+    var ndt = new Date(d.getTime() - 1000 * 60 * i);
     var year = ndt.getFullYear() + "";
     var month = ndt.getMonth() + 1 + "";
     var day = ndt.getDate() + "";
