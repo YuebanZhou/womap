@@ -4,7 +4,7 @@ var arr = [];
 var arrdata = [50,60,45,89,70];
 // 用来存放arr对应的发送量数组，真数据
 var arrdata2=[];
-drawchart(arrdata)
+drawchartstatic(arrdata)
 // 发送量初始值
 var temp = 0;
 // 计算请求次数
@@ -12,11 +12,11 @@ var flag = 0;
 // 获取五个时间
 dataTime();
 // 执行五次请求
-getmesage(arr[0])
-getmesage(arr[1])
-getmesage(arr[2])
-getmesage(arr[3])
-getmesage(arr[4])
+getmesagestatic(arr[0])
+getmesagestatic(arr[1])
+getmesagestatic(arr[2])
+getmesagestatic(arr[3])
+getmesagestatic(arr[4])
 
 // 获取时间函数
 function dataTime() {
@@ -50,7 +50,7 @@ function dataTime() {
 }
 
 //获取后台数据 
-function getmesage(queryDate) {
+function getmesagestatic(queryDate) {
   $.ajax({
     type: 'post',
     // async: false,
@@ -58,6 +58,7 @@ function getmesage(queryDate) {
     url: "http://10.162.26.182:10002/wo_send/jzyx/getRoamingPhone",
     data: {
       send: queryDate
+      // send: "20180627142059"
     },
     success: function (result) {
       console.log("请求成功");
@@ -66,7 +67,8 @@ function getmesage(queryDate) {
       arrdata2.push(temp)
       flag += 1;
       if (flag == 5) {
-        drawchart(arrdata2)
+        drawchartstatic(arrdata2);
+        $(".cover").hide();
       }
     },
     error: function () {
@@ -77,7 +79,7 @@ function getmesage(queryDate) {
 // 绘制折线图
 
 //绘制index页面上静态的折线图
-function drawchart(arrdata) {
+function drawchartstatic(arrdata) {
   var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
   var lineoption = {
     title: {
@@ -178,7 +180,7 @@ function drawchart(arrdata) {
       //   var res = [];
 
       //   for (var i = 0; i < arr.length; i++) {
-      //     res.push(getmesage(arr[i]))
+      //     res.push(getmesagestatic(arr[i]))
 
       //   }
       //   return res;

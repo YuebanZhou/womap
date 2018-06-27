@@ -1,7 +1,0 @@
-地图短信发送量
-地址
-url: "http://10.162.26.182:10001/electronicFence/hallSendQuery",
-请求参数
-orderId:'74b2xsa20180523152239',
-hallId:'74b2xsa',
-queryDate:"2018-05-25",

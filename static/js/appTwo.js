@@ -5,15 +5,24 @@ var exit = false;
 // 获取canvas盒子
 var mainChart = echarts.init(document.getElementById('main-two'));
 // 时间数组，用于存放当前时刻以及往前数十秒时刻
-var arr = [];
-// 用来存放arr对应的发送量数组
-var arrdata = [43, 453, 123, 354, 75, 93, 253, 354, 521, 2];
+var arrtentime = [];
+
+// 用来计数，是否请求十次数据
+var num = 0;
+// 用来存放arr对应的发送量数组，假数据
+var arrdatavalue = [43, 453, 123, 354, 75, 93, 253, 354, 521, 2];
+// 获取真数据之前先渲染假数据
+drawchartmove(arrdatavalue)
+// 用来存放arr对应的发送量数组，真数据
+var arrdatavalue2 = [];
 // 发送量初始值
 var temp = 0;
 // 获取时间
 dataTime();
-console.log(arr);
-
+console.log(arrtentime);
+for (var i = 0; i < arrtentime.length; i++) {
+  getmesagemove(arrtentime[i]);
+}
 
 //点击查看详情按钮
 $(".consul").click(function () {
@@ -29,14 +38,15 @@ $(".consul").click(function () {
   settimer();
   console.log('查看详情');
   // 将数据push进数组
-  // for (var i = 0; i < arr.length; i++) {
-  //   arrdata.push(getmesage(arr[i]))
+  // for (var i = 0; i < arrtentime.length; i++) {
+  //   arrdatavalue.push(getmesagemove(arrtentime[i]))
   // }
 })
 //点击返回全国地图按钮
 $(".return").click(function () {
   // 点击返回全国按钮，直接刷新当前页面
-  window.location.reload()
+  window.location.reload();
+  $(".cover").show()
   //清理定时器
   if (exit) {
     econsole()
@@ -53,165 +63,167 @@ $(window).resize(function () {
   // chartsize()
 })
 // 绘制折线图
-mainoption = {
-  title: {
-    text: '动态数据',
-    textStyle: {
-      color: '#fff'
-    }
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
+function drawchartmove(arrdatavalue) {
+  mainoption = {
+    title: {
+      text: '动态数据',
+      textStyle: {
+        color: '#fff'
+      }
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'line',
+        label: {
+          backgroundColor: '#283b56',
+          color: '#fff'
+        }
+      },
+      textStyle: {
+        color: '#fff'
+      },
+      position: [10, 350],
+      extraCssText: 'width: 80%;height:180px',
+      // formatter: function (params) {
+      //   return params.name + ' : ' + params.value[2];
+      // }
+    },
+
+    legend: {
+      data: ['短信发送量'],
+      textStyle: {
+        color: '#fff',
+        fontSize: 18
+      }
+
+    },
+    toolbox: {
+      show: true,
+      feature: {
+        dataView: {
+          readOnly: false
+        },
+        restore: {},
+        saveAsImage: {}
+      },
+      iconStyle: {
+        color: '#fff'
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: true,
+      //x轴的时间信息
+      data: (function () {
+        //获取当前日期
+        var now = new Date();
+        //临时数组
+        var res = [];
+        //设置长度是10
+        var len = 10;
+
+        while (len--) {
+          //unshift向开头添加一个或多个元素
+          //开头添加当前时间
+          //将字符串中非数字转换成空
+          res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
+          //日期为当前日期减去2000
+          now = new Date(now - 1000 * 5);
+        }
+        return res;
+      })(),
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: '#fff'
+        },
+        //数据全部展示，不隐藏
+        //interval: 0
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#fff'
+        }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      scale: true,
+      name: '短信量',
+      nameTextStyle: {
+        color: '#fff'
+      },
+      // max: 50000,
+      min: 0,
+      boundaryGap: [0.2, 0.2],
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: '#fff'
+        },
+        //数据全部展示，不隐藏
+        interval: 0
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#fff'
+        }
+      }
+    },
+    series: [{
+      name: '短信发送量',
       type: 'line',
-      label: {
-        backgroundColor: '#283b56',
-        color: '#fff'
-      }
-    },
-    textStyle: {
-      color: '#fff'
-    },
-    position: [10, 350],
-    extraCssText: 'width: 80%;height:180px',
-    // formatter: function (params) {
-    //   return params.name + ' : ' + params.value[2];
-    // }
-  },
+      // data: (function () {
+      //   //临时数组
+      //   var res = [];
+      //   //数组长度
+      //   var len = 0;
+      //   while (len < 10) {
+      //     //将随机数push进临时数组
+      //     //toFixed()将随机数四舍五入，括号中参数表示小数的位数
+      //     res.push((Math.random() * 50000).toFixed(1) - 0);
+      //     //push进一个随机数，长度就+1
+      //     len++;
+      //   }
+      //   return res;
+      // })(),
+      data: arrdatavalue
 
-  legend: {
-    data: ['短信发送量'],
-    textStyle: {
-      color: '#fff',
-      fontSize: 18
-    }
+    }],
+    dataZoom: [{
 
-  },
-  toolbox: {
-    show: true,
-    feature: {
-      dataView: {
-        readOnly: false
+      type: 'inside',
+      start: 0,
+      end: 100,
+      //视图刷新
+      throttle: 1000
+    }, {
+      id: 'handle',
+      //手柄样式
+      handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+      handleSize: '80%',
+      handleStyle: {
+        color: '#fff',
+        //手柄设置阴影，立体效果
+        shadowBlur: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.6)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
       },
-      restore: {},
-      saveAsImage: {}
-    },
-    iconStyle: {
-      color: '#fff'
-    }
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: true,
-    //x轴的时间信息
-    data: (function () {
-      //获取当前日期
-      var now = new Date();
-      //临时数组
-      var res = [];
-      //设置长度是10
-      var len = 10;
-
-      while (len--) {
-        //unshift向开头添加一个或多个元素
-        //开头添加当前时间
-        //将字符串中非数字转换成空
-        res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
-        //日期为当前日期减去2000
-        now = new Date(now - 1000 * 5);
+      backgroundColor: '#333',
+      dataBackground: {
+        areaStyle: {
+          color: '#C23531'
+        }
       }
-      return res;
-    })(),
-    axisLabel: {
-      show: true,
-      textStyle: {
-        color: '#fff'
-      },
-      //数据全部展示，不隐藏
-      //interval: 0
-    },
-    axisLine: {
-      lineStyle: {
-        color: '#fff'
-      }
+    }],
+    grid: {
+      width: 'auto'
     }
-  },
-  yAxis: {
-    type: 'value',
-    scale: true,
-    name: '短信量',
-    nameTextStyle: {
-      color: '#fff'
-    },
-    // max: 50000,
-    min: 0,
-    boundaryGap: [0.2, 0.2],
-    axisLabel: {
-      show: true,
-      textStyle: {
-        color: '#fff'
-      },
-      //数据全部展示，不隐藏
-      interval: 0
-    },
-    axisLine: {
-      lineStyle: {
-        color: '#fff'
-      }
-    }
-  },
-  series: [{
-    name: '短信发送量',
-    type: 'line',
-    // data: (function () {
-    //   //临时数组
-    //   var res = [];
-    //   //数组长度
-    //   var len = 0;
-    //   while (len < 10) {
-    //     //将随机数push进临时数组
-    //     //toFixed()将随机数四舍五入，括号中参数表示小数的位数
-    //     res.push((Math.random() * 50000).toFixed(1) - 0);
-    //     //push进一个随机数，长度就+1
-    //     len++;
-    //   }
-    //   return res;
-    // })(),
-    data: arrdata
-
-  }],
-  dataZoom: [{
-
-    type: 'inside',
-    start: 0,
-    end: 100,
-    //视图刷新
-    throttle: 1000
-  }, {
-    id: 'handle',
-    //手柄样式
-    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-    handleSize: '80%',
-    handleStyle: {
-      color: '#fff',
-      //手柄设置阴影，立体效果
-      shadowBlur: 3,
-      shadowColor: 'rgba(0, 0, 0, 0.6)',
-      shadowOffsetX: 2,
-      shadowOffsetY: 2
-    },
-    backgroundColor: '#333',
-    dataBackground: {
-      areaStyle: {
-        color: '#C23531'
-      }
-    }
-  }],
-  grid: {
-    width: 'auto'
-  }
-};
-mainChart.setOption(mainoption);
+  };
+  mainChart.setOption(mainoption);
+}
 
 
 //定时器
@@ -226,8 +238,17 @@ function settimer() {
       //将数组的第一个元素删除并且返回第一个元素的值
       //data0.shift();
       //Math.round四舍五入
-      data0.push(Math.round(Math.random() * 200));
-      // data0.push(getmesage(dataTimenow()));
+      // data0.push(Math.round(Math.random() * 10));
+
+      var queryDate = dataTimenow();
+      var value = getmesagemove(queryDate)
+      console.log(value);
+      
+      if(value==undefined){
+        console.log("进入判断");
+        value=0;
+      }
+      data0.push(value);
       //将x轴data第一项删除
       //mainoption.xAxis.data.shift();
       //将当前时间push进data数组
@@ -242,6 +263,7 @@ function settimer() {
 
       //绘制chart
       mainChart.setOption(mainoption);
+
     }, 1000 * 5);
 
   };
@@ -284,15 +306,15 @@ function dataTime() {
       seconds = "0" + seconds
     }
     today = year + month + day + hour + minute + seconds;
-    arr.push(today);
+    arrtentime.push(today);
 
   }
   // 翻转数组
-  arr.reverse()
+  arrtentime.reverse()
 
 }
 // 获取当前时间
-function dataTimen() {
+function dataTimenow() {
   for (var i = 0; i < 10; i++) {
     var dn = new Date();
     var yearn = dn.getFullYear() + "";
@@ -300,6 +322,7 @@ function dataTimen() {
     var dayn = dn.getDate() + "";
     var hourn = dn.getHours() + "";
     var minuten = dn.getMinutes() + "";
+    var seconds = dn.getSeconds() + "";
     if (monthn < 10 && monthn >= 0) {
       monthn = "0" + monthn;
     }
@@ -312,15 +335,17 @@ function dataTimen() {
     if (minuten < 10 && minuten >= 0) {
       minuten = "0" + minuten
     }
-    todayn = yearn + monthn + dayn + hourn + minuten;
+    if (seconds < 10 && seconds >= 0) {
+      seconds = "0" + seconds
+    }
+    todayn = yearn + monthn + dayn + hourn + minuten + seconds;
   }
   console.log(todayn);
   return todayn
 }
-dataTimen()
 
 //获取后台数据 
-function getmesage(queryDate) {
+function getmesagemove(queryDate) {
   $.ajax({
     type: 'post',
     // async: false,
@@ -333,7 +358,12 @@ function getmesage(queryDate) {
       console.log("请求成功");
       console.log(result);
       temp = result.code;
+      arrdatavalue2.push(temp);
+      num += 1;
+      if (num == 10) {
+        drawchartmove(arrdatavalue2);
 
+      }
     },
     error: function () {
       console.log("请求失败")
